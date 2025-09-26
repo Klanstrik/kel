@@ -8,7 +8,6 @@ if (navToggle && navList) {
     navToggle.setAttribute('aria-expanded', String(opened));
   });
 
-  // Закрытие по клику вне меню
   document.addEventListener('click', (e) => {
     if (!navList.contains(e.target) && !navToggle.contains(e.target)) {
       navList.classList.remove('open');
@@ -16,7 +15,6 @@ if (navToggle && navList) {
     }
   });
 
-  // Закрытие по Esc
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       navList.classList.remove('open');
@@ -30,25 +28,118 @@ if (navToggle && navList) {
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-/* --- Запрет старта выделения вне полей формы (синее полотно) --- */
+/* --- Запрет старта выделения вне полей формы --- */
 document.addEventListener('selectstart', (e) => {
   const t = e.target;
   const tag = (t.tagName || '').toLowerCase();
   if (tag === 'input' || tag === 'textarea') return;
   e.preventDefault();
 });
-
-/* --- Блокируем дабл-клик-выделение/протяжку по странице --- */
 document.addEventListener('mousedown', (e) => {
   if (e.detail > 1) e.preventDefault();
 });
-
-/* --- На мобильных: гасим длительное удержание --- */
 document.addEventListener('touchstart', () => {}, { passive: true });
 
-// ===== Форма: валидация + ОТПРАВКА В TELEGRAM + тост =====
+/* ===================== МАСКА ТЕЛЕФОНА ===================== */
+/* Формат: +7 (XXX) XXX-XX-XX. Ввод только цифр.               */
+/* Всегда отрезаем ведущие 7/8 (код страны) из значения поля. */
+const phoneInput = document.getElementById('phone');
+
+// утилита: берём только цифры
+const onlyDigits = (s) => String(s || '').replace(/\D/g, '');
+
+// извлекаем локальные 10 цифр (без кода страны)
+const getLocal10 = (rawValue) => {
+  let d = onlyDigits(rawValue);
+  if (!d) return '';
+
+  // если начинается с 8 — заменим на 7 (частый ввод)
+  if (d[0] === '8') d = '7' + d.slice(1);
+
+  // если начинается с 7 — это код страны, отрезаем его
+  if (d[0] === '7') d = d.slice(1);
+
+  // оставляем не больше 10 локальных цифр
+  if (d.length > 10) d = d.slice(0, 10);
+
+  return d;
+};
+
+const formatLocal10 = (local10) => {
+  const d = local10.padEnd(10, '_').split('');
+  const n = local10.length;
+
+  if (n === 0) return '+7 ';
+  if (n <= 3)  return `+7 (${d.slice(0,3).join('').replace(/_+$/,'')}`;
+  if (n <= 6)  return `+7 (${d.slice(0,3).join('')}) ${d.slice(3,6).join('').replace(/_+$/,'')}`;
+  if (n <= 8)  return `+7 (${d.slice(0,3).join('')}) ${d.slice(3,6).join('')}-${d.slice(6,8).join('').replace(/_+$/,'')}`;
+  return           `+7 (${d.slice(0,3).join('')}) ${d.slice(3,6).join('')}-${d.slice(6,8).join('')}-${d.slice(8,10).join('').replace(/_+$/,'')}`;
+};
+
+(function initPhoneMask() {
+  if (!phoneInput) return;
+
+  phoneInput.setAttribute('inputmode', 'tel');
+  phoneInput.setAttribute('autocomplete', 'tel');
+  if (!phoneInput.getAttribute('placeholder')) {
+    phoneInput.setAttribute('placeholder', '+7 (___) ___-__-__');
+  }
+
+  const MIN_POS = 3; // позиция после "+7 "
+  const moveCaretEnd = (el) => requestAnimationFrame(() => {
+    const len = el.value.length; el.setSelectionRange(len, len);
+  });
+
+  // Фокус: показываем префикс и текущий формат
+  phoneInput.addEventListener('focus', () => {
+    const local = getLocal10(phoneInput.value);
+    phoneInput.value = formatLocal10(local);
+    moveCaretEnd(phoneInput);
+  });
+
+  // Клик: не даём ставить каретку в префикс
+  phoneInput.addEventListener('click', () => {
+    const pos = phoneInput.selectionStart || 0;
+    if (pos < MIN_POS) phoneInput.setSelectionRange(MIN_POS, MIN_POS);
+  });
+
+  // Бэкспейс/стрелки: не заходим в префикс
+  phoneInput.addEventListener('keydown', (e) => {
+    const pos = phoneInput.selectionStart || 0;
+    if ((e.key === 'Backspace' || e.key === 'ArrowLeft') && pos <= MIN_POS) {
+      e.preventDefault();
+      phoneInput.setSelectionRange(MIN_POS, MIN_POS);
+    }
+  });
+
+  const reformat = (sourceValue) => {
+    const local = getLocal10(sourceValue);
+    phoneInput.value = formatLocal10(local);
+    moveCaretEnd(phoneInput);
+  };
+
+  phoneInput.addEventListener('input', () => reformat(phoneInput.value));
+
+  phoneInput.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const t = (e.clipboardData || window.clipboardData).getData('text');
+    reformat(t);
+  });
+
+  // Blur: если нет цифр — очищаем поле
+  phoneInput.addEventListener('blur', () => {
+    const local = getLocal10(phoneInput.value);
+    if (!local.length) phoneInput.value = '';
+  });
+
+  // Инициализация
+  if (!phoneInput.value) phoneInput.value = '';
+})();
+
+/* =============== Форма: отправка в Telegram =============== */
 const form = document.querySelector('.contact-form');
 const toast = document.querySelector('.form-toast');
+const thanksPanel = document.querySelector('.thanks-panel');
 
 if (form && toast) {
   form.addEventListener('submit', async (e) => {
@@ -56,29 +147,38 @@ if (form && toast) {
 
     const fd = new FormData(form);
     const name = String(fd.get('name') || '').trim();
-    const phone = String(fd.get('phone') || '').trim();
+    const local10 = getLocal10(phoneInput ? phoneInput.value : fd.get('phone'));
     const message = String(fd.get('message') || '').trim();
 
-    if (!name || !phone) {
-      showToast('Пожалуйста, заполните имя и телефон.');
+    const normalizedPhone = local10 ? '7' + local10 : ''; // 7XXXXXXXXXX
+
+    if (!name || !normalizedPhone) {
+      showToast('Пожалуйста, заполните имя и корректный телефон.');
       return;
     }
 
-    // === ОТПРАВКА НА СЕРВЕРНЫЙ ЭНДПОЙНТ /api/telegram ===
     try {
       const resp = await fetch('/api/telegram', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, message })
+        body: JSON.stringify({
+          name,
+          phone: normalizedPhone,           // в ТГ — 7XXXXXXXXXX
+          phone_display: phoneInput.value,  // красивый формат для сообщения, если нужно
+          message
+        })
       });
 
       if (!resp.ok) throw new Error('Network error');
 
-      showToast('Спасибо! Заявка отправлена в Telegram.');
+      showToast('Спасибо! Заявка отправлена. Мы скоро с вами свяжемся.');
+      form.classList.add('sent');
+      if (thanksPanel) thanksPanel.hidden = false;
       form.reset();
+      if (phoneInput) phoneInput.value = '';
     } catch (err) {
       console.error(err);
-      showToast('Не удалось отправить в Telegram. Попробуйте ещё раз.');
+      showToast('Не удалось отправить. Попробуйте ещё раз.');
     }
   });
 }
@@ -97,7 +197,7 @@ function showToast(message) {
   }, 3200);
 }
 
-// ===== Трендовый клик: Ripple (мышь/тач/клавиатура) =====
+// ===== Ripple (мышь/тач/клавиатура) =====
 function attachRipple(selector) {
   const elements = document.querySelectorAll(selector);
   elements.forEach((el) => {
@@ -118,20 +218,17 @@ function attachRipple(selector) {
       ripple.addEventListener('animationend', () => ripple.remove());
     };
 
-    // Мышь
     el.addEventListener('click', (e) => {
       const tag = (e.target.tagName || '').toLowerCase();
       if (tag === 'a' && e.target !== el) return;
       runRipple(e.clientX, e.clientY);
     });
 
-    // Тач
     el.addEventListener('touchstart', (e) => {
       const t = e.touches[0];
       if (t) runRipple(t.clientX, t.clientY);
     }, { passive: true });
 
-    // Клавиатура
     el.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       const rect = el.getBoundingClientRect();
