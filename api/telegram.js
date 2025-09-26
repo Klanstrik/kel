@@ -1,6 +1,6 @@
 // Vercel Serverless Function: /api/telegram
 export default async function handler(req, res) {
-  // CORS (полезно при локальной проверке/с поддоменов)
+  // CORS 
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
