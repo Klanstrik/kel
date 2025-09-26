@@ -9,8 +9,6 @@
   --ring:0 0 0 3px rgba(215,38,61,.25);
   --shadow:0 10px 30px rgba(0,0,0,.15);
   --radius:20px;
-
-  /* сдвиг правого визуала от заголовка */
   --visual-shift: 76px;
 }
 
@@ -27,18 +25,13 @@ body{
   font-family: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   line-height:1.5;
 
-  /* глобально отключаем выделение (синюю заливку) */
   -webkit-user-select: none;
   user-select: none;
 }
 
-/* разрешаем выделение в полях формы */
 input, textarea{ -webkit-user-select: text; user-select: text; }
-
-/* гасим подсветку выделения */
 *::selection, *::-moz-selection{ background: transparent !important; color: inherit !important; }
 
-/* Utilities */
 .container{width:min(1100px,92%); margin-inline:auto;}
 .section{padding:80px 0;}
 .section-alt{background:linear-gradient(180deg, rgba(255,247,214,.7), rgba(255,255,255,.5));}
@@ -148,15 +141,39 @@ input, textarea{ -webkit-user-select: text; user-select: text; }
 /* Contact */
 .contact-wrap{display:grid; grid-template-columns:1.1fr .9fr; gap:24px; align-items:start;}
 .contact-form{
+  position:relative;
   background:#fff; padding:20px; border-radius:18px; border:1.5px solid #222; box-shadow:var(--shadow);
+  overflow:hidden;
 }
 .f-row{display:flex; flex-direction:column; gap:8px; margin-bottom:14px;}
 label{font-weight:700;}
 input,textarea{ border:1.5px solid #222; border-radius:12px; padding:12px 12px; font:inherit; background:#fff; }
 input:focus,textarea:focus{ outline:none; box-shadow: var(--ring); }
 .f-actions{display:flex; gap:12px; align-items:center; flex-wrap:wrap;}
-.form-note{color:#muted; font-size:13px; margin:10px 0 0;}
+.form-note{color:var(--muted); font-size:13px; margin:10px 0 0;}
 .form-toast{ margin-top:12px; padding:10px 12px; border-radius:12px; border:1px solid rgba(0,0,0,.12); background:#fffbe6; font-weight:700; display:none; }
+
+/* Спасибо-панель */
+.thanks-panel{
+  position:absolute; inset:0; display:none;           /* по умолчанию скрыта */
+  place-items:center;
+  background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,251,214,.96));
+  pointer-events:none;                                 /* чтобы точно не ловить клики, пока скрыта */
+}
+.thanks-panel[hidden]{ display:none !important; }      /* страховка на случай hidden */
+
+.thanks-card{
+  text-align:center; background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:22px;
+  box-shadow:var(--shadow);
+  max-width:460px; width:min(92vw,460px);
+  transform: translateY(12px); opacity:0;
+  transition: transform .25s ease, opacity .25s ease;
+  pointer-events:auto;                                  /* кликабельные кнопки внутри */
+}
+
+.contact-form.sent .form-body{ filter: blur(4px); opacity:0; pointer-events:none; }
+.contact-form.sent .thanks-panel{ display:grid; }       /* показываем только после отправки */
+.contact-form.sent .thanks-card{ transform:none; opacity:1; }
 
 /* Contact side */
 .contact-side{
@@ -179,20 +196,20 @@ input:focus,textarea:focus{ outline:none; box-shadow: var(--ring); }
 .neon{ color:#111; text-shadow:0 0 0 transparent, 0 0 0 transparent; position:relative; }
 .neon::before{ content:""; position:absolute; inset:0 -10px -8px -10px; border-radius:18px; box-shadow:0 0 32px rgba(247,209,23,.4), 0 0 60px rgba(215,38,61,.25); z-index:-1; }
 
-/* сдвиг правого визуала */
+/* Visual shift */
 @media (min-width:961px){
   .hero-visual{ position:relative; }
   .hero-visual .neon-sign,
   .hero-visual .saul-card{ transform: translateX(var(--visual-shift)); }
 }
 
-/* 5 карточек в ряд на широких экранах */
+/* 5 карточек в ряд на очень широких экранах */
 @media (min-width:1280px){
   .container{ width:min(1280px, 92%); }
   .cards{ grid-template-columns: repeat(5, minmax(220px, 1fr)); }
 }
 
-/* Ripple (стили для анимации; сам эффект в JS) */
+/* Ripple */
 .ripple{ position:absolute; border-radius:50%; transform:scale(0); opacity:.35; background:currentColor; pointer-events:none; mix-blend-mode:multiply; }
 .ripple.run{ animation: ripple 600ms ease-out forwards; }
 @keyframes ripple{ to{ transform:scale(12); opacity:0; } }
@@ -212,7 +229,7 @@ input:focus,textarea:focus{ outline:none; box-shadow: var(--ring); }
   .nav-list.open{display:flex;}
 }
 
-/* убираем контуры фокуса (по запросу) */
+/* Фокусы по запросу отключены */
 *:focus, *:focus-visible, a:focus, button:focus, .card:focus{
   outline:none !important;
   box-shadow:none !important;
