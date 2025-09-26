@@ -155,30 +155,44 @@
       <h2 class="section-title">Связаться со мной</h2>
       <div class="contact-wrap">
         <form class="contact-form" aria-label="Форма обратной связи">
-          <div class="f-row">
-            <label for="name">Имя</label>
-            <input id="name" name="name" type="text" required placeholder="Как к вам обращаться" />
+          <div class="form-body">
+            <div class="f-row">
+              <label for="name">Имя</label>
+              <input id="name" name="name" type="text" required placeholder="Как к вам обращаться" />
+            </div>
+            <div class="f-row">
+              <label for="phone">Телефон</label>
+              <input id="phone" name="phone" type="tel"
+                     required inputmode="tel" autocomplete="tel"
+                     placeholder="+7 (___) ___-__-__" />
+            </div>
+            <div class="f-row">
+              <label for="message">Сообщение</label>
+              <textarea id="message" name="message" rows="4" placeholder="Коротко опишите ситуацию"></textarea>
+            </div>
+            <div class="f-actions">
+              <button type="submit" class="btn btn-primary">Отправить</button>
+              <a class="btn btn-ghost" href="tel:+70000000000">Позвонить сейчас</a>
+            </div>
+            <p class="form-note">Нажимая «Отправить», вы соглашаетесь с обработкой персональных данных.</p>
+            <div class="form-toast" role="status" aria-live="polite" hidden></div>
           </div>
-          <div class="f-row">
-            <label for="phone">Телефон</label>
-            <input id="phone" name="phone" type="tel" required placeholder="+7 (___) ___-__-__" />
+
+          <!-- Панель «спасибо» — показывается после успешной отправки -->
+          <div class="thanks-panel" aria-live="polite" hidden>
+            <div class="thanks-card">
+              <div class="thanks-emoji">✅</div>
+              <h3>Спасибо! Заявка отправлена</h3>
+              <p>Мы скоро с вами свяжемся по указанным контактам.</p>
+              <a class="btn" href="#services">Вернуться к услугам</a>
+            </div>
           </div>
-          <div class="f-row">
-            <label for="message">Сообщение</label>
-            <textarea id="message" name="message" rows="4" placeholder="Коротко опишите ситуацию"></textarea>
-          </div>
-          <div class="f-actions">
-            <button type="submit" class="btn btn-primary">Отправить</button>
-            <a class="btn btn-ghost" href="tel:+70000000000">Позвонить сейчас</a>
-          </div>
-          <p class="form-note">Нажимая «Отправить», вы соглашаетесь с обработкой персональных данных.</p>
-          <div class="form-toast" role="status" aria-live="polite" hidden></div>
         </form>
 
         <aside class="contact-side">
           <h3>Как со мной связаться</h3>
           <ul class="contact-list">
-            <li><span>Телефон:</span> <a href="tel:+70000000000">+7 000 000-00-00</a></li>
+            <li><span>Телефон:</span> <a href="tel:+7 953 858 4193">+7 953 858 4193</a></li>
             <li><span>Email:</span> <a href="mailto:keler@goodlaw.law">keler@goodlaw.law</a></li>
             <li><span>Адрес:</span> Ул. Конфиденциальная, 7</li>
             <li><span>График:</span> Ежедневно, 24/7</li>
@@ -192,10 +206,6 @@
   <!-- Футер -->
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p class="disclaimer">
-        *Дисклеймер: данный сайт — демонстрация. Любые совпадения с реальными лицами случайны.
-        «Better Call Saul» упомянут как вдохновение. Мы не связаны с правообладателями.
-      </p>
       <div class="footer-meta">
         <span>© <span id="year"></span> Келер</span>
         <a href="#hero">Наверх ↑</a>
