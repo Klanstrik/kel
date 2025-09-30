@@ -229,6 +229,29 @@ input:focus,textarea:focus{ outline:none; box-shadow: var(--ring); }
   .nav-list.open{display:flex;}
 }
 
+/* ===== Мобильная карусель (свайп), БЕЗ mask-image ===== */
+@media (max-width:960px){
+  .carousel{
+    display:grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 88%;
+    overflow-x: auto;
+    gap: 16px;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scroll-padding-inline: 12px;
+    scrollbar-width: none;
+    /* Важно: без mask-image — он и ломал правый край в Safari */
+  }
+  .carousel::-webkit-scrollbar{ display:none; }
+  .cards.carousel{ grid-auto-columns: 84%; }
+  .carousel > *{ scroll-snap-align: start; }
+  .card{ min-height: 300px; }
+  .testimonials.carousel{ grid-auto-columns: 88%; }
+  .t-card{ min-height: 180px; }
+}
+
 /* Фокусы по запросу отключены */
 *:focus, *:focus-visible, a:focus, button:focus, .card:focus{
   outline:none !important;
