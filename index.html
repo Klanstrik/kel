@@ -39,17 +39,22 @@
     <div class="container hero-inner">
       <div class="hero-copy">
         <p class="tag">БЫСТРО • ДЕЛИКАТНО • БЕЗ ЛИШНИХ ВОПРОСОВ</p>
-        <h1 class="neon">
-          Лучше&nbsp;<span class="underline">позвоните</span>&nbsp;Келер
+
+        <!-- ПК — одна строка; мобила/планшет — перенос после «Лучше» -->
+        <h1 class="neon hero-title">
+          <span class="h1-head">Лучше</span><span class="mob-br"></span><span class="h1-tail"><span class="underline">позвоните</span> Келер</span>
         </h1>
+
         <p class="lead">
           Попали в историю? Не паникуйте. Я превращаю юридические проблемы в управляемые задачи.
           Звонок — и мы уже работаем.
         </p>
+
         <div class="hero-actions">
           <a class="btn btn-primary" href="#contact">Бесплатная консультация</a>
           <a class="btn btn-ghost" href="#services">Посмотреть услуги</a>
         </div>
+
         <ul class="hero-bullets">
           <li>24/7 на связи</li>
           <li>Фиксированная стоимость</li>
@@ -75,6 +80,8 @@
   <section id="services" class="section section-alt">
     <div class="container">
       <h2 class="section-title">Услуги</h2>
+
+      <!-- свайповая карусель на мобилке -->
       <div class="grid cards carousel" role="region" aria-label="Карусель услуг">
         <article class="card">
           <div class="card-icon">📞</div>
@@ -131,6 +138,7 @@
   <section id="testimonials" class="section">
     <div class="container">
       <h2 class="section-title">Отзывы клиентов</h2>
+
       <div class="grid testimonials carousel" role="region" aria-label="Карусель отзывов">
         <figure class="t-card">
           <blockquote>«Думал, всё пропало. Келер разложила ситуацию по полочкам и буквально спасла проект.»</blockquote>
@@ -177,6 +185,7 @@
             <div class="form-toast" role="status" aria-live="polite" hidden></div>
           </div>
 
+          <!-- Панель «спасибо» -->
           <div class="thanks-panel" aria-live="polite" hidden>
             <div class="thanks-card">
               <div class="thanks-emoji">✅</div>
