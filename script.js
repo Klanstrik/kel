@@ -41,34 +41,19 @@ document.addEventListener('mousedown', (e) => {
 document.addEventListener('touchstart', () => {}, { passive: true });
 
 /* ===================== МАСКА ТЕЛЕФОНА ===================== */
-/* Формат: +7 (XXX) XXX-XX-XX. Ввод только цифр.               */
-/* Всегда отрезаем ведущие 7/8 (код страны) из значения поля. */
 const phoneInput = document.getElementById('phone');
-
-// утилита: берём только цифры
 const onlyDigits = (s) => String(s || '').replace(/\D/g, '');
-
-// извлекаем локальные 10 цифр (без кода страны)
 const getLocal10 = (rawValue) => {
   let d = onlyDigits(rawValue);
   if (!d) return '';
-
-  // если начинается с 8 — заменим на 7 (частый ввод)
   if (d[0] === '8') d = '7' + d.slice(1);
-
-  // если начинается с 7 — это код страны, отрезаем его
   if (d[0] === '7') d = d.slice(1);
-
-  // оставляем не больше 10 локальных цифр
   if (d.length > 10) d = d.slice(0, 10);
-
   return d;
 };
-
 const formatLocal10 = (local10) => {
   const d = local10.padEnd(10, '_').split('');
   const n = local10.length;
-
   if (n === 0) return '+7 ';
   if (n <= 3)  return `+7 (${d.slice(0,3).join('').replace(/_+$/,'')}`;
   if (n <= 6)  return `+7 (${d.slice(0,3).join('')}) ${d.slice(3,6).join('').replace(/_+$/,'')}`;
@@ -90,20 +75,17 @@ const formatLocal10 = (local10) => {
     const len = el.value.length; el.setSelectionRange(len, len);
   });
 
-  // Фокус: показываем префикс и текущий формат
   phoneInput.addEventListener('focus', () => {
     const local = getLocal10(phoneInput.value);
     phoneInput.value = formatLocal10(local);
     moveCaretEnd(phoneInput);
   });
 
-  // Клик: не даём ставить каретку в префикс
   phoneInput.addEventListener('click', () => {
     const pos = phoneInput.selectionStart || 0;
     if (pos < MIN_POS) phoneInput.setSelectionRange(MIN_POS, MIN_POS);
   });
 
-  // Бэкспейс/стрелки: не заходим в префикс
   phoneInput.addEventListener('keydown', (e) => {
     const pos = phoneInput.selectionStart || 0;
     if ((e.key === 'Backspace' || e.key === 'ArrowLeft') && pos <= MIN_POS) {
@@ -126,13 +108,11 @@ const formatLocal10 = (local10) => {
     reformat(t);
   });
 
-  // Blur: если нет цифр — очищаем поле
   phoneInput.addEventListener('blur', () => {
     const local = getLocal10(phoneInput.value);
     if (!local.length) phoneInput.value = '';
   });
 
-  // Инициализация
   if (!phoneInput.value) phoneInput.value = '';
 })();
 
@@ -163,8 +143,8 @@ if (form && toast) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name,
-          phone: normalizedPhone,           // в ТГ — 7XXXXXXXXXX
-          phone_display: phoneInput.value,  // красивый формат для сообщения, если нужно
+          phone: normalizedPhone,
+          phone_display: phoneInput.value,
           message
         })
       });
@@ -197,38 +177,51 @@ function showToast(message) {
   }, 3200);
 }
 
-// ===== Ripple (мышь/тач/клавиатура) =====
+// ===== Ripple (мышь/тач/клавиатура) — без двойных срабатываний =====
 function attachRipple(selector) {
   const elements = document.querySelectorAll(selector);
+
   elements.forEach((el) => {
     const cs = getComputedStyle(el);
     if (cs.position === 'static') el.style.position = 'relative';
     if (cs.overflow !== 'hidden') el.style.overflow = 'hidden';
 
+    let lastPointerTs = 0; // время последнего pointerdown
+
     const runRipple = (x, y) => {
       const rect = el.getBoundingClientRect();
       const ripple = document.createElement('span');
       ripple.className = 'ripple';
-      const size = Math.ceil(Math.sqrt(rect.width ** 2 + rect.height ** 2)) * 1.1;
+      const size = Math.ceil(Math.hypot(rect.width, rect.height)) * 1.1;
       ripple.style.width = ripple.style.height = `${size}px`;
       ripple.style.left = `${x - rect.left - size / 2}px`;
-      ripple.style.top = `${y - rect.top - size / 2}px`;
+      ripple.style.top  = `${y - rect.top  - size / 2}px`;
       el.appendChild(ripple);
       requestAnimationFrame(() => ripple.classList.add('run'));
       ripple.addEventListener('animationend', () => ripple.remove());
     };
 
-    el.addEventListener('click', (e) => {
-      const tag = (e.target.tagName || '').toLowerCase();
-      if (tag === 'a' && e.target !== el) return;
+    // Универсальный источник: pointerdown
+    el.addEventListener('pointerdown', (e) => {
+      if (e.button && e.button !== 0) return; // игнор правой/средней кнопок
+      const link = e.target.closest('a');
+      if (link && link !== el) return;        // если кликаем по вложенной ссылке — не рисуем риппл на контейнере
+      lastPointerTs = Date.now();
       runRipple(e.clientX, e.clientY);
-    });
-
-    el.addEventListener('touchstart', (e) => {
-      const t = e.touches[0];
-      if (t) runRipple(t.clientX, t.clientY);
     }, { passive: true });
 
+    // Игнорируем «синтетический» click сразу после pointerdown (тач)
+    el.addEventListener('click', (e) => {
+      if (Date.now() - lastPointerTs < 400) {
+        return; // это клик, который следует за тачем — не повторяем действие
+      }
+      // На десктопе могли получить click без pointerdown (например, через клавиатуру)
+      const rect = el.getBoundingClientRect();
+      runRipple(e.clientX || rect.left + rect.width / 2,
+                e.clientY || rect.top  + rect.height / 2);
+    }, { passive: true });
+
+    // Клавиатура (Enter/Space)
     el.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       const rect = el.getBoundingClientRect();
