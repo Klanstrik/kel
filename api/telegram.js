@@ -1,4 +1,4 @@
-// Vercel Serverless Function: /api/telegram
+
 export default async function handler(req, res) {
   // CORS 
   if (req.method === 'OPTIONS') {
@@ -37,3 +37,4 @@ export default async function handler(req, res) {
     res.status(500).json({ ok:false, error:String(e) });
   }
 }
+
