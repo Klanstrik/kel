@@ -5,16 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Лучше позвоните Келер — Юридическое бюро</title>
   <meta name="description" content="Юридическая помощь без нервов и проволочек. Лучше позвоните Келер — решим быстро.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E⚖️%3C/text%3E%3C/svg%3E">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="logo-justice.png">
+  <!-- Шрифты -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Unbounded:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="#" aria-label="Главная — Лучше позвоните Келер">
-        <span class="brand-icon" aria-hidden="true">⚖️</span>
-        <span class="brand-text">Келер</span>
+        <img class="brand-icon" src="logo-justice.png" alt="Логотип Келер">
+        <span class="brand-text">Keller</span>
       </a>
 
       <nav class="nav" aria-label="Главная навигация">
@@ -32,32 +33,43 @@
       <a class="cta-call" href="tel:+70000000000" title="Позвонить сейчас">Позвонить</a>
     </div>
   </header>
+
   <section id="hero" class="hero">
+    <!-- Декор: Фемиды — внутри hero, чтобы не ехали со скроллом -->
+    <div class="femidas" aria-hidden="true">
+      <img class="femida femida-left" src="femida-left.png" alt="">
+      <img class="femida femida-right" src="femida-right.png" alt="">
+    </div>
+
     <div class="container hero-inner">
       <div class="hero-copy">
-        <p class="tag">БЫСТРО • ДЕЛИКАТНО • БЕЗ ЛИШНИХ ВОПРОСОВ</p>
-        <h1 class="neon hero-title">
-          <span class="h1-head">Лучше</span><span class="mob-br"></span><span class="h1-tail"><span class="underline">позвоните</span> Келер</span>
+        <p class="tag">ПРОФЕССИОНАЛЬНАЯ ПОМОЩЬ • ОПЕРАТИВНОСТЬ • РЕЗУЛЬТАТИВНОСТЬ</p>
+
+        <h1 class="hero-title">
+          <span class="h1-capsule">
+            <span class="h1-better">Лучше</span>
+            <span class="h1-call">Звоните</span>
+            <span class="h1-brand">Келлер</span>
+          </span>
         </h1>
 
         <p class="lead">
-          Попали в историю? Не паникуйте. Я превращаю юридические проблемы в управляемые задачи.
-          Звонок — и мы уже работаем.
+          Если закон не сработает для вас, то это сделает Келлер. Звонок - и мы уже работаем!
         </p>
 
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#contact">Бесплатная консультация</a>
-          <a class="btn btn-ghost" href="#services">Посмотреть услуги</a>
+          <a class="btn btn-primary" href="#contact">Оставить заявку</a>
+          <a class="btn btn-ghost" href="#services">Смотреть услуги</a>
         </div>
 
         <ul class="hero-bullets">
-          <li>24/7 на связи</li>
-          <li>Фиксированная стоимость</li>
-          <li>Конфиденциально</li>
+          <li>Конфиденциально, 24/7</li>
+          <li>Опыт и аккуратность</li>
+          <li>Человеческим языком, без «воды»</li>
         </ul>
       </div>
 
-      <div class="hero-visual" aria-hidden="true">
+      <div class="hero-visual">
         <div class="neon-sign">
           <span class="neon-line">CALL</span>
           <span class="neon-line neon-accent">KELER</span>
@@ -70,10 +82,10 @@
       </div>
     </div>
   </section>
+
   <section id="services" class="section section-alt">
     <div class="container">
       <h2 class="section-title">Услуги</h2>
-      
       <div class="grid cards carousel" role="region" aria-label="Карусель услуг">
         <article class="card">
           <div class="card-icon">📞</div>
@@ -85,71 +97,87 @@
             <li>Доступно и по делу</li>
           </ul>
         </article>
-
         <article class="card">
           <div class="card-icon">📝</div>
           <h3>Договоры и претензии</h3>
-          <p>Составление и проверка документов, досудебные претензии, переговоры и мировые соглашения.</p>
+          <p>Составление / анализ договоров, досудебные претензии, переговоры.</p>
           <ul class="list">
-            <li>Чёткая формулировка</li>
-            <li>Защита интересов</li>
-            <li>Минимум бюрократии</li>
+            <li>Без «воды»</li>
+            <li>С понятными сроками</li>
+            <li>С фокусом на результат</li>
           </ul>
         </article>
-
         <article class="card">
           <div class="card-icon">⚖️</div>
-          <h3>Судебное сопровождение</h3>
-          <p>Представительство в суде. Готовим стратегию, доказательства и держим вас в курсе.</p>
+          <h3>Суды и защита</h3>
+          <p>Исковые заявления, представительство, апелляции.</p>
           <ul class="list">
-            <li>План «A/B»</li>
-            <li>Аргументы и факты</li>
-            <li>Сроки под контролем</li>
+            <li>Выверенная стратегия</li>
+            <li>Документы «под ключ»</li>
+            <li>Коммуникация и контроль</li>
           </ul>
         </article>
-
         <article class="card">
-          <div class="card-icon">🕶️</div>
-          <h3>Деликатные дела</h3>
-          <p>Конфиденциальные вопросы, требующие такта и гибкости. Решим, не привлекая лишнего внимания.</p>
+          <div class="card-icon">🏢</div>
+          <h3>Бизнес</h3>
+          <p>Регистрация/сопровождение, трудовые споры, взыскания.</p>
           <ul class="list">
-            <li>Анонимность</li>
-            <li>Персональный подход</li>
-            <li>Дипломатия прежде всего</li>
+            <li>Снижение рисков</li>
+            <li>Экономия времени</li>
+            <li>Понятные отчёты</li>
           </ul>
         </article>
-
-        <article class="card card-empty" aria-label="Пустая карточка услуги">
-          &nbsp;
+        <article class="card">
+          <div class="card-icon">🕵️‍♀️</div>
+          <h3>Детективные услуги</h3>
+          <p>Конфиденциальные проверки, сбор фактов и аналитика для защиты ваших интересов.</p>
+          <ul class="list">
+            <li>Проверка фактов и связей</li>
+            <li>Поиск свидетелей и активов</li>
+            <li>OSINT и цифровая аналитика</li>
+          </ul>
         </article>
       </div>
     </div>
   </section>
 
-  <section id="testimonials" class="section">
+  <section id="testimonials" class="section section-alt">
     <div class="container">
       <h2 class="section-title">Отзывы клиентов</h2>
-
       <div class="grid testimonials carousel" role="region" aria-label="Карусель отзывов">
         <figure class="t-card">
-          <blockquote>«Думал, всё пропало. Келер разложила ситуацию по полочкам и буквально спасла проект.»</blockquote>
-          <figcaption>— Никита, предприниматель</figcaption>
+          <blockquote>«Думал, всё пропало. Келер разложила ситуацию по полочкам и буквально спасла»</blockquote>
+          <figcaption>Антон, Москва</figcaption>
         </figure>
         <figure class="t-card">
-          <blockquote>«Главное — спокойствие. Пять звонков, три письма — и вопрос закрыт. Рекомендую!»</blockquote>
-          <figcaption>— Анна, PR-менеджер</figcaption>
+          <blockquote>«Суд выиграли, объясняла всё по шагам, держала в курсе»</blockquote>
+          <figcaption>Илья, Санкт-Петербург</figcaption>
         </figure>
         <figure class="t-card">
-          <blockquote>«В суде выступила чётко и уверенно. Победили, хотя шансы казались небольшими.»</blockquote>
-          <figcaption>— Олег, частный клиент</figcaption>
+          <blockquote>«Сделала договор так, что контрагент перестал спорить»</blockquote>
+          <figcaption>Мария, Казань</figcaption>
         </figure>
       </div>
+    </div>
+  </section>
+
+  <section id="trusted" class="section section-alt trusted">
+    <div class="container">
+      <h2 class="section-title">Нам доверяют</h2>
+      <ul class="trusted-logos" aria-label="Логотипы клиентов">
+        <li><span class="logo">ACME</span></li>
+        <li><span class="logo">MESA VERDE</span></li>
+        <li><span class="logo">HHM</span></li>
+        <li><span class="logo">LOS POLLOS</span></li>
+        <li><span class="logo">LUXURY AUTO</span></li>
+        <li><span class="logo">DESERT BANK</span></li>
+      </ul>
     </div>
   </section>
 
   <section id="contact" class="section section-alt">
     <div class="container">
-      <h2 class="section-title">Связаться со мной</h2>
+      <h2 id="contact-title" class="section-title">Связаться со мной</h2>
       <div class="contact-wrap">
         <form class="contact-form" aria-label="Форма обратной связи">
           <div class="form-body">
@@ -159,37 +187,25 @@
             </div>
             <div class="f-row">
               <label for="phone">Телефон</label>
-              <input id="phone" name="phone" type="tel"
-                     required inputmode="tel" autocomplete="tel"
-                     placeholder="+7 (___) ___-__-__" />
+              <input id="phone" name="phone" type="tel" required inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" />
             </div>
             <div class="f-row">
               <label for="message">Сообщение</label>
-              <textarea id="message" name="message" rows="4" placeholder="Коротко опишите ситуацию"></textarea>
+              <textarea id="message" name="message" rows="4" placeholder="Коротко опишите ситуацию/проблему"></textarea>
             </div>
             <div class="f-actions">
               <button type="submit" class="btn btn-primary">Отправить</button>
-              <a class="btn btn-ghost" href="tel:+70000000000">Позвонить сейчас</a>
+              <a class="btn btn-ghost" href="tel:+79538584193">Позвонить сейчас</a>
             </div>
             <p class="form-note">Нажимая «Отправить», вы соглашаетесь с обработкой персональных данных.</p>
-            <div class="form-toast" role="status" aria-live="polite" hidden></div>
-          </div>
-
-          <div class="thanks-panel" aria-live="polite" hidden>
-            <div class="thanks-card">
-              <div class="thanks-emoji">✅</div>
-              <h3>Спасибо! Заявка отправлена</h3>
-              <p>Мы скоро с вами свяжемся по указанным контактам.</p>
-              <a class="btn" href="#services">Вернуться к услугам</a>
-            </div>
           </div>
         </form>
 
-        <aside class="contact-side">
+        <aside class="contact-side" aria-labelledby="contact-title">
           <h3>Как со мной связаться</h3>
           <ul class="contact-list">
             <li><span>Телефон:</span> <a href="tel:+7 953 858 4193">+7 953 858 4193</a></li>
-            <li><span>Email:</span> <a href="mailto:keler@goodlaw.law">keler@goodlaw.law</a></li>
+            <li><span>Email:</span> <a href="mailto:katakeler734@gmail.com">katakeler734@gmail.com</a></li>
             <li><span>Адрес:</span> Ул. Конфиденциальная, 7</li>
             <li><span>График:</span> Ежедневно, 24/7</li>
           </ul>
@@ -199,10 +215,19 @@
     </div>
   </section>
 
+  <!-- НИЖНИЙ СЛОГАН -->
+  <section class="bottom-quote" aria-label="Итоговое напоминание">
+    <div class="container">
+      <p class="bq-text">
+        Если закон крепко загнал вас в угол — <span class="bq-call">надо звонить Келлер!</span>
+      </p>
+    </div>
+  </section>
+
   <footer class="site-footer">
     <div class="container footer-inner">
       <div class="footer-meta">
-        <span>© <span id="year"></span> Келер</span>
+        <span>© <span id="year"></span> Келлер</span>
         <a href="#hero">Наверх ↑</a>
       </div>
     </div>
@@ -211,4 +236,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
