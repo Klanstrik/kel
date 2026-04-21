@@ -43,12 +43,22 @@ export default async function handler(req, res) {
       return res.status(500).json({ ok: false, error: 'TG_CHAT_IDS/TG_CHAT_ID is not configured' });
     }
 
+    const submittedAt = new Date().toLocaleString('ru-RU', {
+      timeZone: 'Asia/Novosibirsk',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+
     const text =
       `📨 Новая заявка с сайта\n\n` +
       `👤 Имя: ${name}\n` +
       `📞 Телефон: ${phoneDisplay}\n` +
       `🗒 Сообщение: ${message || '—'}\n` +
-      `🕒 ${new Date().toLocaleString('ru-RU')}`;
+      `🕒 ${submittedAt}`;
 
     const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
