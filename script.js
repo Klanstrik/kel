@@ -1,4 +1,3 @@
-// ===== Мобильное меню =====
 const navToggle = document.querySelector('.nav-toggle');
 const navList = document.getElementById('primary-menu');
 
@@ -24,25 +23,25 @@ if (navToggle && navList) {
   });
 }
 
-// ===== Год в футере =====
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-/* --- Запрет старта выделения вне полей формы --- */
 document.addEventListener('selectstart', (e) => {
   const t = e.target;
   const tag = (t.tagName || '').toLowerCase();
   if (tag === 'input' || tag === 'textarea') return;
   e.preventDefault();
 });
+
 document.addEventListener('mousedown', (e) => {
   if (e.detail > 1) e.preventDefault();
 });
+
 document.addEventListener('touchstart', () => {}, { passive: true });
 
-/* ===================== МАСКА ТЕЛЕФОНА ===================== */
 const phoneInput = document.getElementById('phone');
 const onlyDigits = (s) => String(s || '').replace(/\D/g, '');
+
 const getLocal10 = (rawValue) => {
   let d = onlyDigits(rawValue);
   if (!d) return '';
@@ -51,14 +50,15 @@ const getLocal10 = (rawValue) => {
   if (d.length > 10) d = d.slice(0, 10);
   return d;
 };
+
 const formatLocal10 = (local10) => {
   const d = local10.padEnd(10, '_').split('');
   const n = local10.length;
   if (n === 0) return '+7 ';
-  if (n <= 3)  return `+7 (${d.slice(0,3).join('').replace(/_+$/,'')}`;
-  if (n <= 6)  return `+7 (${d.slice(0,3).join('')}) ${d.slice(3,6).join('').replace(/_+$/,'')}`;
-  if (n <= 8)  return `+7 (${d.slice(0,3).join('')}) ${d.slice(3,6).join('')}-${d.slice(6,8).join('').replace(/_+$/,'')}`;
-  return           `+7 (${d.slice(0,3).join('')}) ${d.slice(3,6).join('')}-${d.slice(6,8).join('')}-${d.slice(8,10).join('').replace(/_+$/,'')}`;
+  if (n <= 3) return `+7 (${d.slice(0, 3).join('').replace(/_+$/,'')}`;
+  if (n <= 6) return `+7 (${d.slice(0, 3).join('')}) ${d.slice(3, 6).join('').replace(/_+$/,'')}`;
+  if (n <= 8) return `+7 (${d.slice(0, 3).join('')}) ${d.slice(3, 6).join('')}-${d.slice(6, 8).join('').replace(/_+$/,'')}`;
+  return `+7 (${d.slice(0, 3).join('')}) ${d.slice(3, 6).join('')}-${d.slice(6, 8).join('')}-${d.slice(8, 10).join('').replace(/_+$/,'')}`;
 };
 
 (function initPhoneMask() {
@@ -66,13 +66,15 @@ const formatLocal10 = (local10) => {
 
   phoneInput.setAttribute('inputmode', 'tel');
   phoneInput.setAttribute('autocomplete', 'tel');
+
   if (!phoneInput.getAttribute('placeholder')) {
     phoneInput.setAttribute('placeholder', '+7 (___) ___-__-__');
   }
 
-  const MIN_POS = 3; // позиция после "+7 "
+  const MIN_POS = 3;
   const moveCaretEnd = (el) => requestAnimationFrame(() => {
-    const len = el.value.length; el.setSelectionRange(len, len);
+    const len = el.value.length;
+    el.setSelectionRange(len, len);
   });
 
   phoneInput.addEventListener('focus', () => {
@@ -116,12 +118,19 @@ const formatLocal10 = (local10) => {
   if (!phoneInput.value) phoneInput.value = '';
 })();
 
-/* =============== Форма: отправка в Telegram =============== */
 const form = document.querySelector('.contact-form');
-const toast = document.querySelector('.form-toast');
+let toast = document.querySelector('.form-toast');
 const thanksPanel = document.querySelector('.thanks-panel');
 
-if (form && toast) {
+if (!toast && form) {
+  const formBody = form.querySelector('.form-body') || form;
+  toast = document.createElement('div');
+  toast.className = 'form-toast';
+  toast.hidden = true;
+  formBody.appendChild(toast);
+}
+
+if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -129,8 +138,8 @@ if (form && toast) {
     const name = String(fd.get('name') || '').trim();
     const local10 = getLocal10(phoneInput ? phoneInput.value : fd.get('phone'));
     const message = String(fd.get('message') || '').trim();
-
-    const normalizedPhone = local10 ? '7' + local10 : ''; // 7XXXXXXXXXX
+    const normalizedPhone = local10 ? '7' + local10 : '';
+    const phoneDisplay = phoneInput ? phoneInput.value.trim() : '';
 
     if (!name || !normalizedPhone) {
       showToast('Пожалуйста, заполните имя и корректный телефон.');
@@ -144,12 +153,16 @@ if (form && toast) {
         body: JSON.stringify({
           name,
           phone: normalizedPhone,
-          phone_display: phoneInput.value,
+          phone_display: phoneDisplay,
           message
         })
       });
 
-      if (!resp.ok) throw new Error('Network error');
+      const data = await resp.json().catch(() => null);
+
+      if (!resp.ok || !data || !data.ok) {
+        throw new Error((data && data.error) || 'Network error');
+      }
 
       showToast('Спасибо! Заявка отправлена. Мы скоро с вами свяжемся.');
       form.classList.add('sent');
@@ -164,6 +177,11 @@ if (form && toast) {
 }
 
 function showToast(message) {
+  if (!toast) {
+    alert(message);
+    return;
+  }
+
   toast.textContent = message;
   toast.hidden = false;
   toast.style.display = 'block';
@@ -173,11 +191,13 @@ function showToast(message) {
   );
   setTimeout(() => {
     toast.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200 });
-    setTimeout(() => { toast.hidden = true; toast.style.display = 'none'; }, 210);
+    setTimeout(() => {
+      toast.hidden = true;
+      toast.style.display = 'none';
+    }, 210);
   }, 3200);
 }
 
-// ===== Ripple (мышь/тач/клавиатура) — без двойных срабатываний =====
 function attachRipple(selector) {
   const elements = document.querySelectorAll(selector);
 
@@ -186,7 +206,7 @@ function attachRipple(selector) {
     if (cs.position === 'static') el.style.position = 'relative';
     if (cs.overflow !== 'hidden') el.style.overflow = 'hidden';
 
-    let lastPointerTs = 0; // время последнего pointerdown
+    let lastPointerTs = 0;
 
     const runRipple = (x, y) => {
       const rect = el.getBoundingClientRect();
@@ -201,27 +221,23 @@ function attachRipple(selector) {
       ripple.addEventListener('animationend', () => ripple.remove());
     };
 
-    // Универсальный источник: pointerdown
     el.addEventListener('pointerdown', (e) => {
-      if (e.button && e.button !== 0) return; // игнор правой/средней кнопок
+      if (e.button && e.button !== 0) return;
       const link = e.target.closest('a');
-      if (link && link !== el) return;        // если кликаем по вложенной ссылке — не рисуем риппл на контейнере
+      if (link && link !== el) return;
       lastPointerTs = Date.now();
       runRipple(e.clientX, e.clientY);
     }, { passive: true });
 
-    // Игнорируем «синтетический» click сразу после pointerdown (тач)
     el.addEventListener('click', (e) => {
       if (Date.now() - lastPointerTs < 400) {
-        return; // это клик, который следует за тачем — не повторяем действие
+        return;
       }
-      // На десктопе могли получить click без pointerdown (например, через клавиатуру)
       const rect = el.getBoundingClientRect();
       runRipple(e.clientX || rect.left + rect.width / 2,
                 e.clientY || rect.top  + rect.height / 2);
     }, { passive: true });
 
-    // Клавиатура (Enter/Space)
     el.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       const rect = el.getBoundingClientRect();
@@ -229,4 +245,5 @@ function attachRipple(selector) {
     });
   });
 }
+
 attachRipple('.btn, .card');
